@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('idea', function (Blueprint $table) {
+        Schema::create('ideas', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->string('image_path')->nullable();
             $table->text('description')->nullable();
             $table->text('status')->default('pending');
-            $table->boolean('completed')->default(true);                        
             $table->json('links')->default(json_encode([]));
             $table->timestamps();
         });
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('idea');
+        Schema::dropIfExists('ideas');
     }
 };

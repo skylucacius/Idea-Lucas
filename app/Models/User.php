@@ -6,6 +6,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -30,6 +31,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+    protected $table = 'users';
 
     /**
      * Get the attributes that should be cast.
@@ -55,4 +57,14 @@ class User extends Authenticatable
             ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
             : $initials;
     }
+    public function ideas() : HasMany
+    {
+        return $this->hasMany(Idea::class);
+    }
+
+    protected static function newFactory()
+    {
+        return UserFactory::new();
+    }
+
 }

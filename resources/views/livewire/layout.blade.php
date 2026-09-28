@@ -1,11 +1,5 @@
-{{-- <x-layouts::app.sidebar :title="$title ?? null">
-    <flux:main>
-        {{ $slot }}
-    </flux:main>
-</x-layouts::app.sidebar> --}}
 
-
-    <!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="pt"
     x-data="{ theme: localStorage.getItem('theme') || 'light' }"
       :data-theme="theme">
