@@ -17,3 +17,7 @@ new class extends Component {
 <div>
     Oláaaaa
 </div>
+
+{{-- <div class="min-h-screen bg-base-100 text-base-content p-6 flex items-center justify-center transition-colors duration-300">
+    <h1 class="text-2xl font-bold">Oláaaaa bbbb ccc ddd eee fff</h1>
+</div> --}}
