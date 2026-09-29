@@ -30,8 +30,17 @@
                 </flux:sidebar.item>
             </flux:sidebar.nav>
 
-            <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
-        </flux:sidebar>
+    @auth
+        <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
+    @else
+        <div class="hidden lg:block p-4">
+            <flux:button href="{{ route('login') }}" variant="subtle" class="w-full">
+                {{ __('Entrar') }}
+            </flux:button>
+        </div>
+    @endauth
+
+</flux:sidebar>
 
         <!-- Mobile User Menu -->
         <flux:header class="lg:hidden">
@@ -39,12 +48,12 @@
 
             <flux:spacer />
 
+            @auth
             <flux:dropdown position="top" align="end">
                 <flux:profile
                     :initials="auth()->user()->initials()"
                     icon-trailing="chevron-down"
                 />
-
                 <flux:menu>
                     <flux:menu.radio.group>
                         <div class="p-0 text-sm font-normal">
@@ -86,9 +95,14 @@
                     </form>
                 </flux:menu>
             </flux:dropdown>
+        @else
+            <flux:button href="{{ route('login') }}" size="sm">
+                {{ __('Entrar') }}
+            </flux:button>
+        @endauth
         </flux:header>
 
-        {{ $slot }}
+        {{-- {{ $slot }} --}}
 
         @persist('toast')
             <flux:toast.group>

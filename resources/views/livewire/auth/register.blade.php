@@ -29,7 +29,7 @@
                     type="email"
                     required
                     autocomplete="email"
-                    placeholder="email@example.com"
+                    :placeholder="__('email@example.com')"
                 />
 
                 <!-- Password -->
@@ -62,10 +62,13 @@
                     </flux:button>
                 </div>
             </form>
-            <div class="space-x-1 rtl:space-x-reverse text-center text-sm opacity-70">
-                <span>{{ __('Already have an account?') }}</span>
-                <flux:link :href="route('login')" wire:navigate>{{ __('Log in') }}</flux:link>
-            </div>
+            @include('partials.remember-me',
+            [
+                'text' => __('Already have an account?'),
+                'linkText' => __('Log in'),
+                'route' => route('login'),
+            ]
+            )
         </div>
     </x-layouts::auth>
 </div>
