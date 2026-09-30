@@ -39,4 +39,16 @@ class IdeaFactory extends Factory
             'links' => $this->faker->randomElements($randomUrls, rand(1, 5))
         ];
     }
+
+    /**
+     * Estado para criar uma sequência garantindo todos os status.
+     */
+    public function withUniqueStatuses(): static
+    {
+        return $this->sequence(
+            ['status' => IdeaStatus::PENDING],
+            ['status' => IdeaStatus::IN_PROGRESS],
+            ['status' => IdeaStatus::COMPLETED],
+        );
+    }
 }

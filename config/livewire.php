@@ -29,10 +29,15 @@ return [
     |
     */
 
+    // 'component_namespaces' => [
+    //     'layouts' => resource_path('views/layouts'),
+    //     'pages' => resource_path('views/pages'),
+    // ],
+
     'component_namespaces' => [
-        'layouts' => resource_path('views/layouts'),
-        'pages' => resource_path('views/pages'),
-    ],
+    'layouts' => resource_path('views/components/layouts'),
+    // 'pages' => resource_path('views/pages'),
+],
 
     /*
     |---------------------------------------------------------------------------
@@ -44,7 +49,8 @@ return [
     |
     */
 
-    'component_layout' => 'layouts::app',
+    'component_layout' => 'components.layouts.app',
+    // 'layout' => 'components.layouts.app',
 
     /*
     |---------------------------------------------------------------------------
@@ -280,5 +286,4 @@ return [
         'max_components' => 200,     // Maximum components per batch request
     ],
 
-    'layout' => 'layouts.app',
 ];

@@ -78,7 +78,7 @@
     "Already registered?": "Já tem uma conta?",
     "Dashboard": "Painel Principal",
     "Profile": "Perfil",
-    "Log Out": "Sair",
+    "Log out": "Sair",
 
     "Enter your email and password below to log in" : "Entre com seu email e senha abaixo para entrar no sistema",
     "Log in to your account" : "Logar na sua conta",
@@ -90,5 +90,9 @@
     "email@example.com" : "email@exemplo.com",
     "Create account" : "Criar conta",
     "Already have an account?" : "Já tem uma conta?",
+    "Settings" : "Configurações",
+    "Update your name and email address" : "Atualize seu nome e endereço de e-mail",
+    "Save" : "Salvar",
+    "Profile settings" : "Configurações do perfil",
     "Full name" : "Nome completo"
 }

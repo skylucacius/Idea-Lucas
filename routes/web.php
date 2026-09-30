@@ -4,7 +4,8 @@ use Livewire\Volt\Volt;
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Volt::route('/dashboard', 'dashboard')->name('dashboard');
+    Volt::route('/profile/edit', 'settings.profile')->name('profile.edit');
     });
 
 
@@ -13,5 +14,7 @@ Route::middleware('guest')->group(function () {
     Volt::route('/', 'welcome')->name('home');
     // Route::view('/', 'welcome')->name('home');
     });
+
+
 
 require __DIR__.'/settings.php';
