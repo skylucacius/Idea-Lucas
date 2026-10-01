@@ -10,6 +10,34 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property string $title
+ * @property string|null $image_path
+ * @property string|null $description
+ * @property IdeaStatus $status
+ * @property \Illuminate\Database\Eloquent\Casts\ArrayObject<array-key, mixed> $links
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Step> $steps
+ * @property-read int|null $steps_count
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\IdeaFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Idea newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Idea newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Idea query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Idea whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Idea whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Idea whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Idea whereImagePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Idea whereLinks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Idea whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Idea whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Idea whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Idea whereUserId($value)
+ * @mixin \Eloquent
+ */
 class Idea extends Pivot
 {
     /** @use HasFactory<\Database\Factories\IdeaFactory> */

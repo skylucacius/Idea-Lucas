@@ -26,9 +26,8 @@ $ideas = computed(function () {
 ?>
 
 <div>
-    <!-- Seletor com Cards de Status -->
     <div class="mt-10">
-        <span class="text-xs font-medium text-neutral-400 block mb-2">Alterar Status:</span>
+        <span class="text-sm font-bold text-neutral-400 block mb-2">Alterar Status:</span>
         <div class="grid grid-cols-4 gap-4">
 
             @foreach (IdeaStatus::cases() as $statusCase)
@@ -55,7 +54,9 @@ $ideas = computed(function () {
     <div class="w-full py-6">
         <div class="w-[90vw] max-w-[90vw] mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
             @forelse ($this->ideas as $idea)
-                <livewire:idea-card :idea="$idea" :key="$idea->id" />
+            <a href="{{ route('ideas.show', $idea->id) }}" class="block no-underline">
+                <livewire:idea.card :idea="$idea" :key="$idea->id" />
+            </a>
             @empty
             <div class="col-span-2 p-8 text-center border border-dashed border-neutral-800 rounded-xl text-neutral-500">
                 Nenhuma ideia encontrada para o status selecionado.
