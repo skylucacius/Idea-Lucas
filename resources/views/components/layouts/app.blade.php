@@ -14,7 +14,9 @@
     {{-- @include('layouts.app.sidebar') --}}
 
 
-    <main class="flex-1 flex flex-col justify-center items-center">
+    <main class="flex-1 flex flex-col
+    {{-- justify-center  --}}
+    items-center">
         {{ $slot }}
     </main>
 

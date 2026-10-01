@@ -25,4 +25,9 @@ enum IdeaStatus: string
         self::COMPLETED => 'bg-blue-500/15 text-blue-400 border-blue-500/30',
         };
     }
+
+    public function inactiveClasses(): string
+    {
+        return 'bg-neutral-900/40 text-neutral-400 border-neutral-800 hover:bg-neutral-800/50 hover:text-neutral-200';
+    }
 }
