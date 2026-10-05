@@ -2,13 +2,12 @@
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use function Livewire\Volt\{computed, state};
-use App\Enums\IdeaStatus;
+use function Livewire\Volt\{computed, state, on};
 
 state(['selectedStatus' => 'All']);
-$statusSelection = function ($text) {
-    $this->selectedStatus = $text;
-    };
+
+// $statusSelection =  fn($text) => $this->selectedStatus = $text;
+on(['filter-changed' => fn($status) => $this->selectedStatus = $status ]);
 
 $ideas = computed(function () {
     /** @var User|null $user */
@@ -23,34 +22,41 @@ $ideas = computed(function () {
     return $query->get();
 });
 
+state(['show' => false]);
+
 ?>
 
 <div>
-    <div class="mt-10">
-        <span class="text-sm font-bold text-neutral-400 block mb-2">Alterar Status:</span>
-        <div class="grid grid-cols-4 gap-4">
 
-            @foreach (IdeaStatus::cases() as $statusCase)
-                @php
-                    $isActive = $selectedStatus === $statusCase->value;
-                @endphp
-
-                <!-- Botão extraído substituindo a sua seleção -->
-                <x-status-button
-                    :status-case="$statusCase"
-                    :is-active="$isActive"
-                    wire:click="statusSelection('{{ $statusCase->value }}')"
-                />
-            @endforeach
-
-                <x-status-button
-                    label="Todas"
-                    :is-active="$selectedStatus === 'All'"
-                    wire:click="statusSelection('All')"
-                />
+    <!-- Cabeçalho da Página -->
+    <div class="flex items-center justify-between mb-6 mt-10">
+        <div>
+            <h1 class="text-xl font-semibold text-white">Ideias</h1>
+            <p class="text-sm text-zinc-400">Gerencie e acompanhe as sugestões</p>
         </div>
+
+        <!-- Botão de Criar Ideia -->
+        <button
+        @click="$dispatch('open-modal')"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm rounded-lg shadow-lg shadow-emerald-900/20">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        <span>Nova Ideia</span>
+    </button>
     </div>
 
+        <x-modal-idea>
+            <x-save-idea-form />
+        </x-modal-idea>
+
+        
+    <!-- Filtro -->
+    <x-ideas-filter :selectedStatus="$selectedStatus" 
+    {{-- :statusSelection="$statusSelection"  --}}
+    />
+
+    <!-- Exibição das Ideias -->
     <div class="w-full py-6">
         <div class="w-[90vw] max-w-[90vw] mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
             @forelse ($this->ideas as $idea)

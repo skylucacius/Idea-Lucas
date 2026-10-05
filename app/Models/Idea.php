@@ -38,6 +38,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Idea whereUserId($value)
  * @mixin \Eloquent
  */
+
+
 class Idea extends Pivot
 {
     /** @use HasFactory<\Database\Factories\IdeaFactory> */
@@ -49,6 +51,14 @@ class Idea extends Pivot
         'links' => AsArrayObject::class,
     ];
 
+    protected $fillable = [
+        'user_id',
+        'title',
+        'image_path',
+        'description',
+        'status',
+        'links',
+    ];
 
     public function user() : BelongsTo
     {
@@ -65,5 +75,5 @@ class Idea extends Pivot
         return IdeaFactory::new();
     }
 
-    
+
 }

@@ -21,11 +21,13 @@ mount(function ($id) {
         </flux:button>
 
         <div class="flex items-center gap-2">
-            <flux:button href="{{ route('dashboard', $idea->id) }}" icon="pencil-square" variant="subtle" wire:navigate>
-                Edit Idea
+            <flux:button icon="pencil-square" variant="subtle" wire:navigate
+                @click="$dispatch('open-modal')"
+            >
+                Editar
             </flux:button>
             <flux:button wire:click="delete" variant="danger" icon="trash">
-                Delete
+                Deletar
             </flux:button>
         </div>
     </div>
@@ -54,6 +56,33 @@ mount(function ($id) {
             {{ $idea->description }}
         </p>
     </flux:card>
+
+
+
+
+
+
+<x-modal-idea>
+    {{-- <x-save-idea-form :idea="$idea" /> --}}
+
+
+    <!-- Conteúdo Centralizado -->
+    <div class="py-2 text-center">
+        <p class="text-zinc-300 text-base leading-relaxed">
+                    {{ $idea->description ?? 'Velit eum optio accusantium amet nesciunt adipisci nostrum. Et at voluptates et sunt sed reprehenderit aut. Iusto vitae dolor quidem eum possimus eius quia.' }}
+                </p>
+            </div>
+
+</x-modal-idea>
+
+
+
+
+
+
+
+
+
 
     {{-- Seção de Links --}}
     @if(!empty($idea->links))
