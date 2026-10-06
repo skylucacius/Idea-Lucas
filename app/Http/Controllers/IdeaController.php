@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Idea;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,7 +31,9 @@ class IdeaController extends Controller
     public function store(Request $request)
     {
         
+        // dd($request->all()); // Adicione esta linha para depuração
         $validated = $this->validateIdea($request);
+
 
         Idea::create([
             'user_id'     => Auth::id(),
@@ -94,8 +97,22 @@ class IdeaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Idea $idea)
+/**
+     * Remove uma ideia do banco de dados.
+     */
+    public function destroy(Request $request, Idea $idea)
     {
-        //
+        // Garante que o usuário autenticado é o dono da ideia
+        if ($request->user()->id !== $idea->user_id) {
+            abort(403, 'Ação não autorizada.');
+        }
+
+        // Apaga a ideia
+        $idea->delete();
+
+        // Redireciona de volta para a dashboard com mensagem de feedback
+        return redirect()
+            ->route('dashboard')
+            ->with('success', 'Ideia deletada com sucesso!');
     }
 }

@@ -1,24 +1,19 @@
 <?php
 
+use App\Concerns\WithIdeaFilter;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use function Livewire\Volt\{computed, state, on};
-
-state(['selectedStatus' => 'All']);
-
-// $statusSelection =  fn($text) => $this->selectedStatus = $text;
-on(['filter-changed' => fn($status) => $this->selectedStatus = $status ]);
+use function Livewire\Volt\{computed, state, uses};
+uses(WithIdeaFilter::class);
 
 $ideas = computed(function () {
     /** @var User|null $user */
     $user = Auth::user();
     $query = $user ? $user->ideas()->latest() : collect();
-
     // Se um status específico for selecionado (diferente de 'All'), filtra no banco de dados
     if ($this->selectedStatus !== 'All') {
         $query->where('status', $this->selectedStatus);
     }
-
     return $query->get();
 });
 
@@ -27,7 +22,6 @@ state(['show' => false]);
 ?>
 
 <div>
-
     <!-- Cabeçalho da Página -->
     <div class="flex items-center justify-between mb-6 mt-10">
         <div>
@@ -45,15 +39,14 @@ state(['show' => false]);
         <span>Nova Ideia</span>
     </button>
     </div>
-
         <x-modal-idea>
             <x-save-idea-form />
         </x-modal-idea>
-
         
     <!-- Filtro -->
-    <x-ideas-filter :selectedStatus="$selectedStatus" 
-    {{-- :statusSelection="$statusSelection"  --}}
+    <x-ideas-filter 
+        :selectedStatus="$selectedStatus" 
+        event='filter-changed'
     />
 
     <!-- Exibição das Ideias -->

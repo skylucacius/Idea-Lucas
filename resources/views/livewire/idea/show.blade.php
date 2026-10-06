@@ -1,9 +1,11 @@
 <?php
 
+use App\Concerns\WithIdeaFilter;
 use Illuminate\Support\Facades\Auth;
-use function Livewire\Volt\{state, mount};
+use function Livewire\Volt\{state, mount, uses};
 
 state(['idea']);
+uses(WithIdeaFilter::class);
 
 mount(function ($id) {
     /** @var \App\Models\User $user */
@@ -17,7 +19,7 @@ mount(function ($id) {
     {{-- Cabeçalho com Ações --}}
     <div class="flex items-center justify-between">
         <flux:button href="{{ route('dashboard') }}" icon="arrow-left" variant="ghost" wire:navigate>
-            Back to Ideas
+            Voltar a dashboard
         </flux:button>
 
         <div class="flex items-center gap-2">
@@ -26,9 +28,13 @@ mount(function ($id) {
             >
                 Editar
             </flux:button>
-            <flux:button wire:click="delete" variant="danger" icon="trash">
-                Deletar
-            </flux:button>
+            <form action="{{ route('ideas.destroy', $idea) }}" method="POST" class="inline">
+                @csrf
+                @method('DELETE')
+                <flux:button variant="ghost" icon="trash" type="submit" class="!text-zinc-400 hover:!text-red-400 transition-colors">
+                    Deletar
+                </flux:button>
+            </form>
         </div>
     </div>
 
@@ -57,54 +63,12 @@ mount(function ($id) {
         </p>
     </flux:card>
 
+    {{-- Modal inicialmente invisível para criar/editar ideias --}}
+    <x-modal-idea>
+        <x-save-idea-form :idea="$idea" />
+    </x-modal-idea>
 
 
+    <x-idea-links :links="$idea->links" />
 
-
-
-<x-modal-idea>
-    {{-- <x-save-idea-form :idea="$idea" /> --}}
-
-
-    <!-- Conteúdo Centralizado -->
-    <div class="py-2 text-center">
-        <p class="text-zinc-300 text-base leading-relaxed">
-                    {{ $idea->description ?? 'Velit eum optio accusantium amet nesciunt adipisci nostrum. Et at voluptates et sunt sed reprehenderit aut. Iusto vitae dolor quidem eum possimus eius quia.' }}
-                </p>
-            </div>
-
-</x-modal-idea>
-
-
-
-
-
-
-
-
-
-
-    {{-- Seção de Links --}}
-    @if(!empty($idea->links))
-        <div class="space-y-3 pt-4">
-            <h2 class="text-xl font-semibold text-zinc-900 dark:text-white">
-                Links
-            </h2>
-
-            <div class="space-y-2">
-                @php
-                    $links = $idea->links
-                @endphp
-
-                @foreach($links as $link)
-                    <flux:card class="bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 transition p-4 rounded-xl">
-                        <a href="{{ $link }}" class="flex items-center gap-2 text-emerald-500 hover:underline break-all">
-                            <flux:icon icon="arrow-top-right-on-square" class="size-4 shrink-0" />
-                            <span>{{ $link }}</span>
-                        </a>
-                    </flux:card>
-                @endforeach
-            </div>
-        </div>
-    @endif
 </div>
