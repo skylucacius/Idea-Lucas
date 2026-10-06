@@ -59,7 +59,10 @@
     </div>
 
     <!-- Links -->
-    <x-idea-links :links="old('links', $idea?->links ?? [] )" :action=" $idea ? 'update' : 'create' " />
+    <x-idea-links :links="old('links', $idea->links ?? [] )" :action=" $idea ? 'update' : 'create' " />
+        
+    <!-- Passos -->
+    <x-idea-steps :steps="$idea?->steps ?? []" :action=" $idea ? 'update' : 'create' "/>
 
 
     <!-- Ações (Botão Criar / Atualizar) -->

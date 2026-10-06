@@ -6,9 +6,9 @@ use App\Enums\IdeaStatus;
 use Database\Factories\IdeaFactory;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @property int $id
@@ -40,7 +40,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 
 
-class Idea extends Pivot
+class Idea extends Model
 {
     /** @use HasFactory<\Database\Factories\IdeaFactory> */
     use HasFactory;

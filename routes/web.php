@@ -2,11 +2,13 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\IdeaController;
+use App\Http\Controllers\StepController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/ideas', [IdeaController::class, 'store'])->name('ideas.store');
     Route::put('/ideas/{idea}', [IdeaController::class, 'update'])->name('ideas.update');
+    Route::patch('/steps/{step}', [StepController::class, 'update'])->name('steps.update');
     Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy'])->name('ideas.destroy');
     Volt::route('/ideas', 'dashboard')->name('dashboard');
     Volt::route('/ideas/{id}', 'idea.show')->name('ideas.show');

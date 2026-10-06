@@ -45,13 +45,15 @@ mount(function ($id) {
 
     {{-- Status e Tempo decorrido --}}
     <div class="flex items-center gap-3 text-sm text-zinc-500 dark:text-zinc-400">
-        <flux:badge :color="match($idea->status) {
+        {{-- <flux:badge :color="match($idea->status) {
             'completed' => 'green',
             'in_progress' => 'blue',
             default => 'yellow',
         }">
             {{ ucfirst(str_replace('_', ' ', $idea->status->value)) }}
-        </flux:badge>
+        </flux:badge> --}}
+
+        <x-idea-status-badge :status="$idea->status" />
 
         <span>{{ $idea->created_at->diffForHumans() }}</span>
     </div>
@@ -64,11 +66,13 @@ mount(function ($id) {
     </flux:card>
 
     {{-- Modal inicialmente invisível para criar/editar ideias --}}
-    <x-modal-idea>
+    <x-modal-idea title="Editar Ideia">
         <x-save-idea-form :idea="$idea" />
     </x-modal-idea>
 
 
     <x-idea-links :links="$idea->links" />
+
+    <x-idea-steps :steps="$idea->steps" action="view" />
 
 </div>

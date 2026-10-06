@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('steps', function (Blueprint $table) {
             $table->id();
-            $table->boolean('completed')->default(false);
             $table->foreignId('idea_id')->constrained()->onDelete('cascade');
+            $table->boolean('completed')->default(false);
+            $table->string('description');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('Step');
+        Schema::dropIfExists('steps');
     }
 };

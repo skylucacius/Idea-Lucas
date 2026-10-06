@@ -22,9 +22,7 @@ $updateStatus = function (string $newStatus) {
     </h3>
 
     <div class="mt-2">
-    <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium backdrop-blur-md {{ $idea->status->badgeClasses() }}">
-        {{ $idea->status->label() }}
-    </span>
+        <x-idea-status-badge :status="$idea->status" />
     </div>
 
     <p class="mt-3 text-sm text-neutral-400">
