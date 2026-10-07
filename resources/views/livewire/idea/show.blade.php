@@ -11,6 +11,7 @@ mount(function ($id) {
     /** @var \App\Models\User $user */
     $user = Auth::user();
     $this->idea = $user->ideas()->findOrFail($id);
+    $this->selectedStatus2 = $this->idea->status->value;
 });
 
 ?>

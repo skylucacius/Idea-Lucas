@@ -6,25 +6,10 @@ use App\Models\Idea;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class IdeaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -32,16 +17,21 @@ class IdeaController extends Controller
     {
         $validated = $this->validateIdea($request);
 
-        DB::transaction(function () use ($validated) {
+        $imagePath = null;
+        if ($request->hasFile('image_path')) {
+            $imagePath = $request->file('image_path')->store('ideas', 'public');
+        }
+
+        DB::transaction(function () use ($validated, $imagePath) {
             $idea = Idea::create([
                 'user_id'     => Auth::id(),
                 'title'       => $validated['title'],
                 'description' => $validated['description'] ?? null,
+                'image_path'  => $imagePath,
                 'status'      => $validated['status'],
                 'links'       => array_filter($validated['links'] ?? []),
             ]);
 
-            // Cria os passos associados, ignorando os campos de texto em branco
             if (!empty($validated['steps'])) {
                 foreach ($validated['steps'] as $stepData) {
                     if (!empty(trim($stepData['description'] ?? ''))) {
@@ -58,22 +48,6 @@ class IdeaController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Idea $idea)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Idea $idea)
-    {
-        //
-    }
-
-    /**
      * Valida os dados enviados pela requisição da ideia.
      */
     private function validateIdea(Request $request): array
@@ -81,6 +55,7 @@ class IdeaController extends Controller
         return $request->validate([
             'title'               => 'required|string|max:255',
             'description'         => 'nullable|string',
+            'image_path'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'status'              => 'required|string|in:pending,in_progress,completed',
             'links'               => 'nullable|array',
             'links.*'             => 'nullable|url',
@@ -96,28 +71,45 @@ class IdeaController extends Controller
      */
     public function update(Request $request, Idea $idea)
     {
-        // Garante que o usuário logado é o dono
         if ($idea->user_id !== Auth::id()) {
             abort(403, 'Ação não autorizada.');
         }
 
         $validated = $this->validateIdea($request);
 
-        DB::transaction(function () use ($idea, $validated) {
-            // Atualiza os dados da ideia
+        $imagePath = $idea->image_path;
+
+        // Se o usuário clicou na lixeira para remover a imagem existente
+        if ($request->boolean('remove_image')) {
+            if ($idea->image_path) {
+                Storage::disk('public')->delete($idea->image_path);
+            }
+            $imagePath = null;
+        }
+
+        // dd(request()->all());
+
+        // Se enviou uma nova imagem (via drag & drop ou clique no campo)
+        if ($request->hasFile('image_path')) {
+            if ($idea->image_path) {
+                Storage::disk('public')->delete($idea->image_path);
+            }
+            $imagePath = $request->file('image_path')->store('ideas', 'public');
+        }
+
+        DB::transaction(function () use ($idea, $validated, $imagePath) {
             $idea->update([
                 'title'       => $validated['title'],
                 'description' => $validated['description'] ?? null,
+                'image_path'  => $imagePath,
                 'status'      => $validated['status'],
                 'links'       => array_filter($validated['links'] ?? []),
             ]);
 
-            // Sincroniza os passos com o banco de dados
+            // Sincronização dos passos
             if (isset($validated['steps'])) {
                 $keptIds = [];
-
                 foreach ($validated['steps'] as $stepData) {
-                    // Ignora itens totalmente vazios sem ID
                     if (empty(trim($stepData['description'] ?? '')) && empty($stepData['id'])) {
                         continue;
                     }
@@ -129,14 +121,10 @@ class IdeaController extends Controller
                             'completed'   => (bool) ($stepData['completed'] ?? false),
                         ]
                     );
-
                     $keptIds[] = $step->id;
                 }
-
-                // Remove os passos que foram deletados pelo usuário na interface
                 $idea->steps()->whereNotIn('id', $keptIds)->delete();
             } else {
-                // Se a chave "steps" nem foi enviada, remove todos os passos
                 $idea->steps()->delete();
             }
         });
@@ -151,6 +139,10 @@ class IdeaController extends Controller
     {
         if ($request->user()->id !== $idea->user_id) {
             abort(403, 'Ação não autorizada.');
+        }
+
+        if ($idea->image_path) {
+            Storage::disk('public')->delete($idea->image_path);
         }
 
         $idea->delete();
