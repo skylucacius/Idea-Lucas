@@ -6,6 +6,13 @@
     method="POST"
     enctype="multipart/form-data"
     class="space-y-4 text-left"
+    x-data="{ hasErrors: {{ $errors->any() ? 'true' : 'false' }} }"
+    x-init="
+        if (hasErrors) {
+            $dispatch('open-modal');
+        }
+    "
+    @modal-changed.window="selectedStatus2 = $event.detail"    
 >
     @csrf
 
@@ -41,6 +48,24 @@
         />
 
         <input type="hidden" name="status" value="{{ old('status', $this->selectedStatus2 ?? 'pending') }}" />
+    </div>
+
+    <!-- Data de Início (Visível apenas se status for 'pending' ou 'in_progress') -->
+    <div x-show="['pending', 'in_progress'].includes(selectedStatus2)" x-transition>
+        <label for="start_date" class="block text-sm font-medium text-zinc-300 mb-1.5">
+            Data de início
+        </label>
+        <input
+            type="text"
+            name="start_date"
+            id="start_date"
+            value="{{ old('start_date', $idea?->start_date) }}"
+            placeholder="Ex: 15/10/2026 ou Em breve..."
+            class="w-full bg-[#121215] border border-zinc-800 rounded-lg px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
+        />
+        @error('start_date')
+            <span class="text-xs text-red-400 mt-1 block">{{ $message }}</span>
+        @enderror
     </div>
 
     <!-- Descrição -->

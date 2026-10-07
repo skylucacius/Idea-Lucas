@@ -71,7 +71,10 @@
     }" 
     class="space-y-3 pt-4"
 >
-    <h2 class="text-xl font-semibold text-zinc-900 dark:text-white">
+    <h2 class="
+    {{-- text-xl font-semibold text-zinc-900 dark:text-white --}}
+    block text-sm font-medium text-zinc-300 mb-1.5
+    "> 
         Passos
     </h2>
 
