@@ -5,7 +5,7 @@
     action="{{ $idea ? route('ideas.update', $idea) : route('ideas.store') }}"
     method="POST"
     enctype="multipart/form-data"
-    class="space-y-5 text-left"
+    class="space-y-4 text-left"
 >
     @csrf
 
@@ -38,7 +38,6 @@
             :selected-status="old('status', $this->selectedStatus2)"
             event="modal-changed"
         />
-        {{  $this->selectedStatus2 }}
         <input type="hidden" name="status" value="{{ old('status', $this->selectedStatus2) }}" />
     </div>
 
@@ -50,7 +49,7 @@
         <textarea
             name="description"
             id="description"
-            rows="4"
+            rows="3"
             placeholder="Descreva sua ideia..."
             required
             class="w-full bg-[#121215] border border-zinc-800 rounded-lg px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition resize-none"
@@ -156,7 +155,7 @@
     <x-idea-steps :steps="$idea?->steps ?? []" :action="$idea ? 'update' : 'create'"/>
 
     <!-- Ações (Botão Criar / Atualizar) -->
-    <div class="flex justify-end pt-3">
+    <div class="sticky bottom-0 bg-[#18181b] pt-3 pb-1 mt-4 border-t border-zinc-800/60 flex justify-end">
         <button
             type="submit"
             class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-zinc-950 font-semibold text-sm rounded-lg shadow-md transition-colors"
