@@ -39,6 +39,17 @@ mount(function ($id) {
         </div>
     </div>
 
+    {{-- Imagem em Destaque da Ideia --}}
+    @if ($idea->image_path)
+        <div class="w-full aspect-video rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-900 shadow-2xl">
+            <img 
+                src="{{ asset('storage/' . $idea->image_path) }}" 
+                alt="{{ $idea->title }}" 
+                class="w-full h-full object-cover"
+            />
+        </div>
+    @endif
+
     {{-- Título da Ideia --}}
     <h1 class="text-4xl font-bold text-zinc-900 dark:text-white">
         {{ $idea->title }}

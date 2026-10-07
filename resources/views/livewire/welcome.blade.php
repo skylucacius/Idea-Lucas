@@ -1,19 +1,20 @@
 <?php
-// use Livewire\Volt\Component;
-// use Livewire\Attributes\Layout;
 
-// new #[Layout('layouts.app')] class extends Component {
-//     // Sua lógica PHP entra aqui
-// };
+use function Livewire\Volt\{mount};
 
-use Livewire\Volt\Component;
+mount(function () {
+    // Se quiser que a sessão continue ativa ("lembrar de mim"):
+    // Auth::login($user, remember: true);
 
-new class extends Component {
-    // Sua lógica PHP aqui
-};
+    // Regenera a sessão para segurança (evita fixation attack)
+    session()->regenerate();
+
+    // Redireciona para a página inicial/dashboard
+    return redirect()->route('dashboard');
+});
 
 ?>
 
 <div>
-    a
+    <!-- Conteúdo do componente -->
 </div>

@@ -9,7 +9,7 @@ trait WithIdeaFilter
 
     // Declara a propriedade reativa pública
     public string $selectedStatus = 'All';
-    public string $selectedStatus2 = 'All';
+    public string $selectedStatus2;
 
     #[On('filter-changed')]
     public function updateSelectedStatus(string $status): void

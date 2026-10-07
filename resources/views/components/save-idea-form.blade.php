@@ -25,6 +25,7 @@
             value="{{ old('title', $idea?->title) }}"
             placeholder="Alguma ideia nova..."
             required
+            x-effect="if (open) $nextTick(() => $el.focus())"
             class="w-full bg-[#121215] border border-emerald-500 rounded-lg px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition"
         />
         @error('title')
@@ -35,10 +36,11 @@
     <!-- Status -->
     <div>
         <x-ideas-filter
-            :selected-status="old('status', $this->selectedStatus2)"
+            :selected-status="old('status', $this->selectedStatus2 ?? 'pending')"
             event="modal-changed"
         />
-        <input type="hidden" name="status" value="{{ old('status', $this->selectedStatus2) }}" />
+
+        <input type="hidden" name="status" value="{{ old('status', $this->selectedStatus2 ?? 'pending') }}" />
     </div>
 
     <!-- Descrição -->

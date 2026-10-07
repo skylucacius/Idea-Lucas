@@ -43,11 +43,13 @@ state(['show' => false]);
             <x-save-idea-form />
         </x-modal-idea>
         
-    <!-- Filtro -->
-    <x-ideas-filter 
-        :selectedStatus="$selectedStatus" 
-        event='filter-changed'
-    />
+    @if (Auth::user()?->ideas()->count() > 0)
+        <!-- Filtro -->
+        <x-ideas-filter 
+            :selectedStatus="$selectedStatus" 
+            event='filter-changed'
+        />
+    @endif
 
     <!-- Exibição das Ideias -->
     <div class="w-full py-6">
