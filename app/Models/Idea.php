@@ -56,6 +56,7 @@ class Idea extends Model
         'title',
         'image_path',
         'description',
+        'start_date',
         'status',
         'links',
     ];

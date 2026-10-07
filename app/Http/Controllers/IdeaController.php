@@ -27,6 +27,7 @@ class IdeaController extends Controller
                 'user_id'     => Auth::id(),
                 'title'       => $validated['title'],
                 'description' => $validated['description'] ?? null,
+                'start_date'  => $validated['start_date'] ?? null,
                 'image_path'  => $imagePath,
                 'status'      => $validated['status'],
                 'links'       => array_filter($validated['links'] ?? []),
@@ -55,6 +56,7 @@ class IdeaController extends Controller
         return $request->validate([
             'title'               => 'required|string|max:255',
             'description'         => 'nullable|string',
+            'start_date'          => 'nullable|string|max:255',
             'image_path'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'status'              => 'required|string|in:pending,in_progress,completed',
             'links'               => 'nullable|array',
