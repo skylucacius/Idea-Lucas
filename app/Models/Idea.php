@@ -20,8 +20,9 @@ class Idea extends Model
     protected $casts = [
         'status' => IdeaStatus::class,
         'links' => AsArrayObject::class,
-        'start_date' => 'date',
-        'end_date'   => 'date',        ];
+        'start_date' => 'datetime',
+        'end_date'   => 'datetime',
+    ];
 
     protected $fillable = [
         'user_id',
@@ -33,25 +34,39 @@ class Idea extends Model
         'status',
         'links',
     ];
+
     /**
-     * Formatador para start_date (d/m/Y)
+     * Exibe a data no formato BR (d/m/Y H:i ou d/m/Y)
      */
     protected function startDateFormatted(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->start_date?->format('d/m/Y')
+            get: function () {
+                if (!$this->start_date) return null;
+                
+                return $this->start_date->format('H:i:s') !== '00:00:00' 
+                    ? $this->start_date->format('d/m/Y H:i') 
+                    : $this->start_date->format('d/m/Y');
+            }
         );
     }
 
     /**
-     * Formatador para end_date (d/m/Y)
+     * Exibe a data no formato BR (d/m/Y H:i ou d/m/Y)
      */
     protected function endDateFormatted(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->end_date?->format('d/m/Y')
+            get: function () {
+                if (!$this->end_date) return null;
+
+                return $this->end_date->format('H:i:s') !== '00:00:00' 
+                    ? $this->end_date->format('d/m/Y H:i') 
+                    : $this->end_date->format('d/m/Y');
+            }
         );
     }
+
     public function user() : BelongsTo
     {
         return $this->belongsTo(User::class);

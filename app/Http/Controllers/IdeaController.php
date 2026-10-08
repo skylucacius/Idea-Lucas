@@ -49,41 +49,18 @@ class IdeaController extends Controller
         return redirect()->back()->with('success', 'Ideia criada com sucesso!');
     }
 
-    /**
-     * Valida os dados enviados pela requisição da ideia.
-     */
     private function validateIdea(Request $request): array
     {
-        // Preserva o valor digitado pelo usuário (ex: 07/10/2026) para caso a validação falhe
-        // e cria versões em Y-m-d apenas para efetuar a validação
-        $startDateIso = null;
-        if ($request->filled('start_date')) {
-            $startDateObj = \DateTime::createFromFormat('d/m/Y', $request->input('start_date'))
-                ?: \DateTime::createFromFormat('Y-m-d', $request->input('start_date'));
-            $startDateIso = $startDateObj ? $startDateObj->format('Y-m-d') : $request->input('start_date');
-        }
-
-        $endDateIso = null;
-        if ($request->filled('end_date')) {
-            $endDateObj = \DateTime::createFromFormat('d/m/Y', $request->input('end_date'))
-                ?: \DateTime::createFromFormat('Y-m-d', $request->input('end_date'));
-            $endDateIso = $endDateObj ? $endDateObj->format('Y-m-d') : $request->input('end_date');
-        }
-
-        // Criamos uma requisição temporária com os dados convertidos apenas para validar
-        $dataToValidate = array_merge($request->all(), [
-            'start_date' => $startDateIso,
-            'end_date'   => $endDateIso,
-        ]);
-
         $todayBr = now()->format('d/m/Y');
-        $todayIso = now()->startOfDay()->format('Y-m-d');
 
-        $validator = \Illuminate\Support\Facades\Validator::make($dataToValidate, [
+        // Regra flexível que permite ambos os formatos
+        $dateFormatRule = 'nullable|date_format:d/m/Y H:i,d/m/Y';
+
+        $validated = $request->validate([
             'title'               => 'required|string|max:255',
             'description'         => 'nullable|string',
-            'start_date'          => "nullable|date_format:Y-m-d|after_or_equal:{$todayIso}",
-            'end_date'            => "nullable|date_format:Y-m-d|before_or_equal:{$todayIso}",
+            'start_date'          => "{$dateFormatRule}|after_or_equal:{$todayBr}",
+            'end_date'            => "{$dateFormatRule}|before_or_equal:{$todayBr}",
             'image_path'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'status'              => 'required|string|in:pending,in_progress,completed',
             'links'               => 'nullable|array',
@@ -95,11 +72,30 @@ class IdeaController extends Controller
         ], [
             'start_date.after_or_equal' => "O campo data de início deve conter uma data posterior ou igual a {$todayBr}.",
             'end_date.before_or_equal'  => "O campo data de término deve conter uma data anterior ou igual a {$todayBr}.",
-            'start_date.date_format'    => 'O campo data de início deve estar no formato dd/mm/aaaa.',
-            'end_date.date_format'      => 'O campo data de término deve estar no formato dd/mm/aaaa.',
+            'start_date.date_format'    => 'O campo data de início deve estar no formato dd/mm/aaaa ou dd/mm/aaaa hh:mm.',
+            'end_date.date_format'      => 'O campo data de término deve estar no formato dd/mm/aaaa ou dd/mm/aaaa hh:mm.',
         ]);
 
-        $validated = $validator->validate();
+        // Função auxiliar para converter o input recebido no formato ISO para a base de dados
+        $parseDate = function (?string $date) {
+            if (!$date) return null;
+
+            // Se contiver horas (tem espaço e dois pontos)
+            if (str_contains($date, ':')) {
+                return \Illuminate\Support\Carbon::createFromFormat('d/m/Y H:i', $date)->format('Y-m-d H:i:s');
+            }
+
+            // Se for apenas a data
+            return \Illuminate\Support\Carbon::createFromFormat('d/m/Y', $date)->startOfDay()->format('Y-m-d H:i:s');
+        };
+
+        if (!empty($validated['start_date'])) {
+            $validated['start_date'] = $parseDate($validated['start_date']);
+        }
+
+        if (!empty($validated['end_date'])) {
+            $validated['end_date'] = $parseDate($validated['end_date']);
+        }
 
         return $validated;
     }
