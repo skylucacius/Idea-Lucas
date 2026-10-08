@@ -1,17 +1,14 @@
 <?php
 
-use App\Concerns\WithIdeaFilter;
 use Illuminate\Support\Facades\Auth;
 use function Livewire\Volt\{state, mount, uses};
 
 state(['idea']);
-uses(WithIdeaFilter::class);
 
 mount(function ($id) {
     /** @var \App\Models\User $user */
     $user = Auth::user();
     $this->idea = $user->ideas()->findOrFail($id);
-    $this->selectedStatus2 = $this->idea->status->value;
 });
 
 ?>

@@ -8,7 +8,7 @@
     class="space-y-4 text-left"
     x-data="{ 
         hasErrors: {{ $errors->any() ? 'true' : 'false' }},
-        selectedStatus: '{{ old('status', $idea?->status->value ?? $this->selectedStatus2 ?? 'pending') }}'
+        selectedStatus: '{{ old('status', $idea?->status->value ?? 'pending') }}'
  }"
     x-init="
         if (hasErrors) {
@@ -47,11 +47,10 @@
     <!-- Status -->
     <div>
         <x-ideas-filter
-            :selected-status="old('status', $this->selectedStatus2 ?? 'pending')"
+            x-bind:selected-status="selectedStatus"
             event="modal-changed"
         />
-
-        <input type="hidden" name="status" value="{{ old('status', $this->selectedStatus2 ?? 'pending') }}" />
+        <input type="hidden" name="status" :value="selectedStatus" x-ref="statusInput"/>
     </div>
 
     <!-- Data de Início (Visível apenas se status for 'pending' ou 'in_progress') -->
