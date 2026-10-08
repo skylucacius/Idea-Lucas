@@ -53,7 +53,7 @@
         <input type="hidden" name="status" :value="selectedStatus" x-ref="statusInput"/>
     </div>
 
-    <!-- Data de Início (Visível apenas se status for 'pending' ou 'in_progress') -->
+    <!-- Data de início (Visível apenas se status for 'pending' ou 'in_progress') -->
     <div x-show="['pending', 'in_progress'].includes(selectedStatus)" x-transition>
         <label for="start_date" class="block text-sm font-medium text-zinc-300 mb-1.5">
             Data de início
@@ -62,11 +62,29 @@
             type="text"
             name="start_date"
             id="start_date"
-            value="{{ old('start_date', $idea?->start_date) }}"
+            value="{{ old('start_date', $idea?->start_date_formatted) }}"
             placeholder="15/10/2026"
             class="w-full bg-[#121215] border border-zinc-800 rounded-lg px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
         />
         @error('start_date')
+            <span class="text-xs text-red-400 mt-1 block">{{ $message }}</span>
+        @enderror
+    </div>
+    
+    <!-- Data de término (Visível apenas se status for 'completed') -->
+    <div x-show="['completed'].includes(selectedStatus)" x-transition>
+        <label for="end_date" class="block text-sm font-medium text-zinc-300 mb-1.5">
+            Data de término
+        </label>
+        <input
+            type="text"
+            name="end_date"
+            id="end_date"
+            value="{{ old('end_date', $idea?->end_date_formatted) }}"
+            placeholder="15/10/2026"
+            class="w-full bg-[#121215] border border-zinc-800 rounded-lg px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
+        />
+        @error('end_date')
             <span class="text-xs text-red-400 mt-1 block">{{ $message }}</span>
         @enderror
     </div>
