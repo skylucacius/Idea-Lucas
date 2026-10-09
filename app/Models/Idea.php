@@ -31,6 +31,7 @@ class Idea extends Model
         'description',
         'start_date',
         'end_date',
+        'email_sent_at',
         'status',
         'links',
     ];

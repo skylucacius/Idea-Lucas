@@ -37,11 +37,6 @@
             </ul>
         </div>
     @endif --}}
-MAIL_MAILER=smtp
-MAIL_HOST=sandbox.smtp.mailtrap.io
-MAIL_PORT=2525
-MAIL_USERNAME=7b2c7fcf8b4412
-MAIL_PASSWORD=1ad137eb9842f4
     <!-- Título -->
     <div>
         <label for="title" class="block text-sm font-medium text-zinc-300 mb-1.5">
