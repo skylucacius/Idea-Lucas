@@ -32,6 +32,7 @@ class CheckIdeaStartDates extends Command
             // Marca que o e-mail foi enviado para evitar envios duplicados nas próximas rodadas
             $idea->update([
                 'email_sent_at' => $now,
+                'end_date' => $now,
                 'status'        => IdeaStatus::COMPLETED,
             ]);
 

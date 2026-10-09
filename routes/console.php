@@ -14,4 +14,4 @@ Artisan::command('inspire', function () {
 //     Mail::to('teste@exemplo.com')->send(new TestMail());
 // })->everyMinute();
 
-Schedule::command('ideas:check-start-dates')->everyFiveSeconds();
+Schedule::command('ideas:check-start-dates')->everyThirtySeconds();
