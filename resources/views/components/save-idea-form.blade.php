@@ -1,5 +1,8 @@
 @props(['idea' => null])
 
+@php
+    $currentStatus = old('status', is_object($idea?->status) ? $idea->status->value : ($idea?->status ?? 'pending'));
+@endphp
 
 <form
     action="{{ $idea ? route('ideas.update', $idea) : route('ideas.store') }}"
@@ -8,14 +11,14 @@
     class="space-y-4 text-left"
     x-data="{ 
         hasErrors: {{ $errors->any() ? 'true' : 'false' }},
-        selectedStatus: '{{ old('status', $idea?->status->value ?? 'pending') }}'
- }"
+        selectedStatus: '{{ $currentStatus }}'
+    }"
     x-init="
         if (hasErrors) {
             $dispatch('open-modal');
         }
     "
-    @modal-changed.window= "selectedStatus = $event.detail.status"
+    @modal-changed.window="selectedStatus = $event.detail.status"
 >
     @csrf
 
@@ -23,7 +26,22 @@
         @method('PUT')
     @endif
 
-
+    <!-- Alerta Geral de Erros (Garante visualização mesmo se a div do campo estiver escondida) -->
+    {{-- @if ($errors->any())
+        <div class="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-xs text-red-400 space-y-1">
+            <p class="font-semibold">Atenção: verifique os campos abaixo</p>
+            <ul class="list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif --}}
+MAIL_MAILER=smtp
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=7b2c7fcf8b4412
+MAIL_PASSWORD=1ad137eb9842f4
     <!-- Título -->
     <div>
         <label for="title" class="block text-sm font-medium text-zinc-300 mb-1.5">
@@ -51,6 +69,9 @@
             event="modal-changed"
         />
         <input type="hidden" name="status" :value="selectedStatus" x-ref="statusInput"/>
+        @error('status')
+            <span class="text-xs text-red-400 mt-1 block">{{ $message }}</span>
+        @enderror
     </div>
 
     <!-- Data de início (Visível apenas se status for 'pending' ou 'in_progress') -->
@@ -63,7 +84,7 @@
             name="start_date"
             id="start_date"
             value="{{ old('start_date', $idea?->start_date_formatted) }}"
-            placeholder="15/10/2026"
+            placeholder="15/10/2026 ou 15/10/2026 21:57"
             class="w-full bg-[#121215] border border-zinc-800 rounded-lg px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
         />
         @error('start_date')
@@ -81,7 +102,7 @@
             name="end_date"
             id="end_date"
             value="{{ old('end_date', $idea?->end_date_formatted) }}"
-            placeholder="15/10/2026"
+            placeholder="15/10/2026 ou 15/10/2026 21:57"
             class="w-full bg-[#121215] border border-zinc-800 rounded-lg px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
         />
         @error('end_date')

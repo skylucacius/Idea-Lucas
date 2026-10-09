@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Carbon;
 class IdeaController extends Controller
 {
     /**
@@ -49,56 +49,94 @@ class IdeaController extends Controller
         return redirect()->back()->with('success', 'Ideia criada com sucesso!');
     }
 
-    private function validateIdea(Request $request): array
-    {
-        $todayBr = now()->format('d/m/Y');
+private function validateIdea(Request $request): array
+{
+    $validated = $request->validate([
+        'title'               => 'required|string|max:255',
+        'description'         => 'nullable|string',
+        'start_date'          => [
+            'nullable',
+            function ($attribute, $value, $fail) {
+                if (!$value) return;
 
-        // Regra flexível que permite ambos os formatos
-        $dateFormatRule = 'nullable|date_format:d/m/Y H:i,d/m/Y';
+                try {
+                    $hasTime = str_contains($value, ':');
+                    if ($hasTime) {
+                        $startDate = Carbon::createFromFormat('d/m/Y H:i', $value);
+                        if ($startDate->lt(now())) {
+                            $fail("O campo data de início não pode ser anterior à data e hora atual.");
+                        }
+                    } else {
+                        $startDate = Carbon::createFromFormat('d/m/Y', $value)->startOfDay();
+                        if ($startDate->lt(now()->startOfDay())) {
+                            $fail("O campo data de início não pode ser anterior a hoje.");
+                        }
+                    }
+                } catch (\InvalidArgumentException $e) {
+                    $fail("Data de início inválida. Utilize dd/mm/aaaa ou dd/mm/aaaa hh:mm.");
+                }
+            },
+        ],
+        'end_date'            => [
+            'nullable',
+            function ($attribute, $value, $fail) {
+                if (!$value) return;
 
-        $validated = $request->validate([
-            'title'               => 'required|string|max:255',
-            'description'         => 'nullable|string',
-            'start_date'          => "{$dateFormatRule}|after_or_equal:{$todayBr}",
-            'end_date'            => "{$dateFormatRule}|before_or_equal:{$todayBr}",
-            'image_path'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'status'              => 'required|string|in:pending,in_progress,completed',
-            'links'               => 'nullable|array',
-            'links.*'             => 'nullable|url',
-            'steps'               => 'nullable|array',
-            'steps.*.id'          => 'nullable|exists:steps,id',
-            'steps.*.description' => 'nullable|string|max:255',
-            'steps.*.completed'   => 'nullable|boolean',
-        ], [
-            'start_date.after_or_equal' => "O campo data de início deve conter uma data posterior ou igual a {$todayBr}.",
-            'end_date.before_or_equal'  => "O campo data de término deve conter uma data anterior ou igual a {$todayBr}.",
-            'start_date.date_format'    => 'O campo data de início deve estar no formato dd/mm/aaaa ou dd/mm/aaaa hh:mm.',
-            'end_date.date_format'      => 'O campo data de término deve estar no formato dd/mm/aaaa ou dd/mm/aaaa hh:mm.',
-        ]);
+                try {
+                    $hasTime = str_contains($value, ':');
+                    if ($hasTime) {
+                        $endDate = Carbon::createFromFormat('d/m/Y H:i', $value);
+                        if ($endDate->gt(now())) {
+                            $fail("O campo data de término não pode ser posterior à data e hora atual.");
+                        }
+                    } else {
+                        $endDate = Carbon::createFromFormat('d/m/Y', $value)->startOfDay();
+                        if ($endDate->gt(now()->endOfDay())) {
+                            $fail("O campo data de término não pode ser posterior a hoje.");
+                        }
+                    }
+                } catch (\InvalidArgumentException $e) {
+                    $fail("Data de término inválida. Utilize dd/mm/aaaa ou dd/mm/aaaa hh:mm.");
+                }
+            },
+        ],
+        'image_path'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        'status'              => 'required|string|in:pending,in_progress,completed',
+        'links'               => 'nullable|array',
+        'links.*'             => 'nullable|url',
+        'steps'               => 'nullable|array',
+        'steps.*.id'          => 'nullable|exists:steps,id',
+        'steps.*.description' => 'nullable|string|max:255',
+        'steps.*.completed'   => 'nullable|boolean',
+    ]);
 
-        // Função auxiliar para converter o input recebido no formato ISO para a base de dados
-        $parseDate = function (?string $date) {
-            if (!$date) return null;
+    $parseDate = function (?string $date) {
+        if (!$date) return null;
 
-            // Se contiver horas (tem espaço e dois pontos)
-            if (str_contains($date, ':')) {
-                return \Illuminate\Support\Carbon::createFromFormat('d/m/Y H:i', $date)->format('Y-m-d H:i:s');
-            }
-
-            // Se for apenas a data
-            return \Illuminate\Support\Carbon::createFromFormat('d/m/Y', $date)->startOfDay()->format('Y-m-d H:i:s');
-        };
-
-        if (!empty($validated['start_date'])) {
-            $validated['start_date'] = $parseDate($validated['start_date']);
+        if (str_contains($date, ':')) {
+            return Carbon::createFromFormat('d/m/Y H:i', $date)->format('Y-m-d H:i:s');
         }
 
-        if (!empty($validated['end_date'])) {
-            $validated['end_date'] = $parseDate($validated['end_date']);
-        }
+        return Carbon::createFromFormat('d/m/Y', $date)->startOfDay()->format('Y-m-d H:i:s');
+    };
 
-        return $validated;
+    if (!empty($validated['start_date'])) {
+        $validated['start_date'] = $parseDate($validated['start_date']);
     }
+
+    if (!empty($validated['end_date'])) {
+        $validated['end_date'] = $parseDate($validated['end_date']);
+    }
+
+    // Se estiver mudando para concluído, anula a data de início se necessário, e vice-versa
+    if ($validated['status'] === 'completed') {
+        $validated['start_date'] = null;
+    } else {
+        $validated['end_date'] = null;
+    }
+
+    return $validated;
+}
 
     /**
      * Update the specified resource in storage.
